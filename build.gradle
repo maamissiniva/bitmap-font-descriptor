@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'maven-publish'
-    id 'signing'
+    // id 'signing'
 }
 
 def projectName = '_github_maamissiniva_bitmap-font-descriptor'
@@ -30,6 +30,26 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/OWNER/REPOSITORY")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+/*
 
 def isReleaseVersion = !version.endsWith("SNAPSHOT")
 
@@ -84,3 +104,4 @@ signing {
 tasks.withType(Sign) {
     onlyIf { isReleaseVersion }
 }
+*/
