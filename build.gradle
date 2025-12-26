@@ -49,6 +49,7 @@ publishing {
     }
 }
 
+
 /*
 
 def isReleaseVersion = !version.endsWith("SNAPSHOT")
