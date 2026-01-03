@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'maven-publish'
-    // id 'signing'
+    id 'org.jreleaser' version '1.22.0'
 }
 
 def projectName = '_github_maamissiniva_bitmap-font-descriptor'
@@ -13,11 +13,6 @@ jar.archiveBaseName  = 'maamissiniva-bitmap-font-descriptor'
 
 group   = 'io.github.maamissiniva'
 version = '0.1.0'
-
-repositories {
-    mavenCentral()
-}
-
 
 jar {
     manifest {
@@ -32,77 +27,73 @@ java {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/maamissiniva/bitmap-font-descriptor")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-            }
-        }
-    }
     publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
-    }
-}
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'maamissiniva-bitmap-font-descriptor'
 
+            from components.java
 
-/*
-
-def isReleaseVersion = !version.endsWith("SNAPSHOT")
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
             pom {
-                name = 'Iterable'
-                description = '.'
+                name = 'maamissiniva-bitmap-font-descriptor'
+                description = 'Bitmap font descritptor'
                 url = 'https://github.com/maamissiniva/bitmap-font-descriptor'
-                artifactId = 'maamissiniva-bitmap-font-descriptor'
-                from components.java
+                inceptionYear = '2025'
                 licenses {
                     license {
-                        name = 'GNU Lesser General Public License 3.0'
-                        url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
+                        name = 'LGPL-2.1'
+                        url = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html'
                     }
                 }
                 developers {
                     developer {
                         id = 'maamissiniva'
-                        name = 'Maam Issiniva'
-                        email = 'maamissiniva@gmail.com'
+                        name = 'Maamissiniva'
                     }
                 }
                 scm {
                     connection = 'scm:git:https://github.com/maamissiniva/bitmap-font-descriptor.git'
-                    developerConnection = 'scm:git:https://github.com/maamissiniva/bitmap-font-descriptor.git'
+                    developerConnection = 'scm:git:ssh://github.com/maamissiniva/bitmap-font-descriptor.git'
                     url = 'https://github.com/maamissiniva/bitmap-font-descriptor'
                 }
             }
         }
     }
+
     repositories {
         maven {
-            def releaseRepo  = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            url = isReleaseVersion ? releaseRepo : snapshotRepo
-            credentials {
-                username = project.hasProperty('ossrhUsername') ? ossrhUsername : "Unknown user"
-                password = project.hasProperty('ossrhPassword') ? ossrhPassword : "Unknown password"
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+jreleaser {
+    signing {
+        pgp {
+            active = 'ALWAYS'
+            armored = true
+        }
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                'release-deploy' {
+                    active = 'RELEASE'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+            nexus2 {
+                'snapshot-deploy' {
+                    active = 'SNAPSHOT'
+                    snapshotUrl = 'https://central.sonatype.com/repository/maven-snapshots/'
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository('build/staging-deploy')
+                }
             }
         }
     }
-    
 }
-
-signing {
-    sign publishing.publications.mavenJava
-}
-
-tasks.withType(Sign) {
-    onlyIf { isReleaseVersion }
-}
-*/
