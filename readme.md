@@ -2,6 +2,10 @@
 
 POJO definition of a bitmap font description.
 
+## Dependency
+
+[maven central](https://central.sonatype.com/artifact/io.github.maamissiniva/maamissiniva-bitmap-font-descriptor)
+
 ## Warning
 
 There is no support for kerning or ligature. Only variable width.

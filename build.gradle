@@ -5,21 +5,16 @@ plugins {
     id 'org.jreleaser' version '1.22.0'
 }
 
-def projectName = '_github_maamissiniva_bitmap-font-descriptor'
+def mlGhBase                   = 'github.com/maamissiniva/bitmap-font-descriptor'
+def mlArName                   = 'maamissiniva-bitmap-font-descriptor'
+def mlDesc                     = 'Bitmap font POJO.'
+def mlYear                     = '2025'
 
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-eclipse.project.name = projectName
-jar.archiveBaseName  = 'maamissiniva-bitmap-font-descriptor'
-
-group   = 'io.github.maamissiniva'
-version = '0.1.0'
-
-jar {
-    manifest {
-        attributes('Implementation-Title':   project.name,
-                   'Implementation-Version': project.version)
-    }
-}
+eclipse.project.name           = '_github_maamissiniva_bitmap-font-descriptor'
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+jar.archiveBaseName            = mlArName
+group                          = 'io.github.maamissiniva'
+version                        = '0.1.0'
 
 java {
     withJavadocJar()
@@ -29,32 +24,33 @@ java {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = group
-            artifactId = 'maamissiniva-bitmap-font-descriptor'
+            groupId    = group
+            artifactId = mlArName
 
             from components.java
 
             pom {
-                name = 'maamissiniva-bitmap-font-descriptor'
-                description = 'Bitmap font descritptor'
-                url = 'https://github.com/maamissiniva/bitmap-font-descriptor'
-                inceptionYear = '2025'
+                name          = mlArName
+                description   = mlDesc
+                url           = "https://${mlGhBase}"
+                inceptionYear = mlYear
                 licenses {
                     license {
                         name = 'LGPL-2.1'
-                        url = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html'
+                        url  = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html'
                     }
                 }
                 developers {
                     developer {
-                        id = 'maamissiniva'
-                        name = 'Maamissiniva'
+                        id    = 'maamissiniva'
+                        name  = 'Maamissiniva'
+                        email = 'maamissiniva@gmail.com'
                     }
                 }
                 scm {
-                    connection = 'scm:git:https://github.com/maamissiniva/bitmap-font-descriptor.git'
-                    developerConnection = 'scm:git:ssh://github.com/maamissiniva/bitmap-font-descriptor.git'
-                    url = 'https://github.com/maamissiniva/bitmap-font-descriptor'
+                    connection          = "scm:git:https://${mlGhBase}.git"
+                    developerConnection = "scm:git:ssh://${mlGhBase}.git"
+                    url                 = "https://${mlGhBase}"
                 }
             }
         }
@@ -79,18 +75,18 @@ jreleaser {
             mavenCentral {
                 'release-deploy' {
                     active = 'RELEASE'
-                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    url    = 'https://central.sonatype.com/api/v1/publisher'
                     stagingRepository('build/staging-deploy')
                 }
             }
             nexus2 {
                 'snapshot-deploy' {
-                    active = 'SNAPSHOT'
-                    snapshotUrl = 'https://central.sonatype.com/repository/maven-snapshots/'
+                    active                 = 'SNAPSHOT'
+                    snapshotUrl            = 'https://central.sonatype.com/repository/maven-snapshots/'
                     applyMavenCentralRules = true
-                    snapshotSupported = true
-                    closeRepository = true
-                    releaseRepository = true
+                    snapshotSupported      = true
+                    closeRepository        = true
+                    releaseRepository      = true
                     stagingRepository('build/staging-deploy')
                 }
             }
